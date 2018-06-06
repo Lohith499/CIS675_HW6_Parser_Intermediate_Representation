@@ -7,14 +7,17 @@ public class Parser2 extends LexAndParser {
 	int focus = 1;
 	String Error = "";
 	String token = "";
-	AST ast = new AST("GRAPH");
+	ASTree aSTree = new ASTree("GRAPH");
 	Parser2(Map<Integer, String> Tokens){
 		this.pTokens = Tokens;
 	}
 	public String v_parser() {
 		v_graph();
 		if(Error.compareTo("")==0) {
-			System.out.println(ast.toStringTree());
+			System.out.println("Abstract Syntax Tree");
+			System.out.println("");
+			System.out.println(aSTree.toStringTree());
+			System.out.println("");
 			return "Program has no Syntax Errors";
 		}
 		return Error;
@@ -23,15 +26,15 @@ public class Parser2 extends LexAndParser {
 	public void v_graph() {
 		
 		//graph : [ strict ] (graph | digraph) [ ID ] '{' stmt_list '}'
-		v_Terminal("STRICT", ast);
+		v_Terminal("STRICT", aSTree);
 		
-		if(v_Terminal("GRAPH",ast) || v_Terminal("DIGRAPH",ast)) {
-			v_Terminal("ID",ast);
-			 if (v_Terminal("LBRACE",ast )) {
-				 AST Stmt_list = new AST("Stmt_list");
+		if(v_Terminal("GRAPH",aSTree) || v_Terminal("DIGRAPH",aSTree)) {
+			v_Terminal("ID",aSTree);
+			 if (v_Terminal("LBRACE",aSTree )) {
+				 ASTree Stmt_list = new ASTree("Stmt_list");
 				 v_stmt_list(Stmt_list);
-				 ast.addChild(Stmt_list);
-					 if (v_Terminal("RBRACE",ast)) {
+				 aSTree.addChild(Stmt_list);
+					 if (v_Terminal("RBRACE",aSTree)) {
 						 Error ="";
 					 }else {
 						 Error = "Right Brace is missing at token "+ focus;
@@ -43,16 +46,16 @@ public class Parser2 extends LexAndParser {
 		}
 	}
 	//To verify the terminals
-	public Boolean v_Terminal(String terminal, AST a) {
+	public Boolean v_Terminal(String terminal, ASTree a) {
 		token = pTokens.get(focus);
 		//System.out.println("*"+ token+"***"+terminal+"*");
 		if (token.compareTo(terminal)==0) {
 			
 			if(terminal.compareTo("ID")==0) {
-				a.addChild(new AST (ASTokens.get(focus).substring(3,ASTokens.get(focus).length())));
+				a.addChild(new ASTree (ASTokens.get(focus).substring(3,ASTokens.get(focus).length())));
 				//a.addChild(new AST (terminal));
 			} else {
-			a.addChild(new AST (terminal));
+			a.addChild(new ASTree (terminal));
 			}
 			focus = focus+1;
 			return true; }
@@ -191,12 +194,12 @@ public Boolean v_stmt() {
 
 	
 	
-public Boolean v_stmt_list(AST Stmt_list) {
-		AST s = Stmt_list;
+public Boolean v_stmt_list(ASTree Stmt_list) {
+		ASTree s = Stmt_list;
 		int cfocus = focus;
 		token = pTokens.get(focus);
 		//stmt_list : [ stmt [ ';' ] stmt_list ]
-		AST stmt = new AST("stmt");
+		ASTree stmt = new ASTree("stmt");
 		 if (v_stmt(stmt)) {
 			 s.addChild(stmt);
 			 focus = focus-1;
@@ -225,8 +228,8 @@ public Boolean v_stmt_list(AST Stmt_list) {
 		return false;
 	}
 
-	public Boolean v_stmt(AST stmt) {
-		AST s = stmt;
+	public Boolean v_stmt(ASTree stmt) {
+		ASTree s = stmt;
 		token = pTokens.get(focus);
 		int cfocus = focus;
 		int start = focus;
@@ -234,9 +237,9 @@ public Boolean v_stmt_list(AST Stmt_list) {
 			
 			if(v_Terminal("SEMICOLON")) {
 				//System.out.println("Succesful statement"+start);
-				s.addChild(new AST (ASTokens.get(focus-4).substring(3,ASTokens.get(focus-4).length())));
-				s.addChild(new AST("EQUAL"));
-				s.addChild(new AST (ASTokens.get(focus-2).substring(3,ASTokens.get(focus-2).length())));
+				s.addChild(new ASTree (ASTokens.get(focus-4).substring(3,ASTokens.get(focus-4).length())));
+				s.addChild(new ASTree("EQUAL"));
+				s.addChild(new ASTree (ASTokens.get(focus-2).substring(3,ASTokens.get(focus-2).length())));
 				return true;
 			}
 			else {
@@ -248,7 +251,7 @@ public Boolean v_stmt_list(AST Stmt_list) {
 			//System.out.println("Unsuccesful statement");
 			//System.out.println("Entered Node Verification statement");
 			focus = cfocus;
-			AST node_stmt = new AST("Node_Stmt");
+			ASTree node_stmt = new ASTree("Node_Stmt");
 			if (v_node_stmt(node_stmt) ) {
 				if (v_Terminal("SEMICOLON")) { 
 					//System.out.println("Succesful v_node_stmt"+start);
@@ -262,7 +265,7 @@ public Boolean v_stmt_list(AST Stmt_list) {
 				
 			} else {
 				focus = cfocus;
-				AST attr_stmt = new AST("Attr_Stmt");
+				ASTree attr_stmt = new ASTree("Attr_Stmt");
 				//System.out.println("Entered attr_stmt Verification statement");
 				if(v_attr_stmt(attr_stmt)) {
 					//System.out.println("Succesful v_attr_stmt"+focus);
@@ -279,7 +282,7 @@ public Boolean v_stmt_list(AST Stmt_list) {
 				else {
 					focus = cfocus;
 					//System.out.println("Entered Edge_stmt Verification statement");
-					AST edge_stmt = new AST("EDGE_Stmt");
+					ASTree edge_stmt = new ASTree("EDGE_Stmt");
 					if(v_edge_stmt(edge_stmt)) {
 						//System.out.println("Succesful v_edge_stmt"+focus);
 						if (v_Terminal("SEMICOLON",s)) { 
@@ -295,7 +298,7 @@ public Boolean v_stmt_list(AST Stmt_list) {
 					else {
 						focus = cfocus;
 						System.out.println("Entered Subgraph Verification statement");
-						AST subgraph_stmt = new AST("Subgraph_Stmt");
+						ASTree subgraph_stmt = new ASTree("Subgraph_Stmt");
 						if(v_subgraph(subgraph_stmt)) {
 							//System.out.println("Succesful v_subgraph"+focus);
 							
@@ -344,8 +347,8 @@ public Boolean v_stmt_list(AST Stmt_list) {
 	}
 	
 	
-	public Boolean v_subgraph(AST Sub_graph) {
-		AST s = Sub_graph;
+	public Boolean v_subgraph(ASTree Sub_graph) {
+		ASTree s = Sub_graph;
 		int cfocus = focus;
 		Boolean prev =false;
 		if (v_Terminal("SUBGRAPH",s)) {
@@ -358,7 +361,7 @@ public Boolean v_stmt_list(AST Stmt_list) {
 		Error="";
 		if (v_Terminal("LBRACE" ,s)) {
 			cfocus=focus;
-			AST stmt_list = new AST("Subg_Stmt_list");
+			ASTree stmt_list = new ASTree("Subg_Stmt_list");
 			if (v_stmt_list(stmt_list)) {
 				s.addChild(stmt_list);
 				if (v_Terminal("RBRACE",s)){
@@ -456,17 +459,17 @@ public Boolean v_stmt_list(AST Stmt_list) {
 	
 	
 	
-	public Boolean v_node_stmt (AST Node_stmt) {
-		AST s = Node_stmt;
+	public Boolean v_node_stmt (ASTree Node_stmt) {
+		ASTree s = Node_stmt;
 		int cnfocus = focus;
-		AST node_id = new AST("Node_id");
+		ASTree node_id = new ASTree("Node_id");
 		if ( v_node_id(node_id)) {
 			s.addChild(node_id);
 			cnfocus = focus;
 			if (v_Terminal("LBRACKET")) {
 				cnfocus=focus;
 				focus=focus-1;
-				AST attr_list = new AST("Attr_List");
+				ASTree attr_list = new ASTree("Attr_List");
 				if (v_attr_list(attr_list)) {
 					s.addChild(attr_list);
 					return true;
@@ -481,14 +484,14 @@ public Boolean v_stmt_list(AST Stmt_list) {
 		return false;
 	}
 	
-	public Boolean v_node_id(AST Node_id) {
-		AST s = Node_id;
+	public Boolean v_node_id(ASTree Node_id) {
+		ASTree s = Node_id;
 		int cfocus =focus;
 		if (v_Terminal("ID",s)) {
 			cfocus = focus;
 			if (v_Terminal("COLON",s)) {
 				focus=focus-1;
-				AST port = new AST("Port");
+				ASTree port = new ASTree("Port");
 				if(v_port(port)) {
 					s.addChild(port);
 					return true;
@@ -518,8 +521,8 @@ public Boolean v_stmt_list(AST Stmt_list) {
 	
 	
 	
-	public Boolean v_port(AST Port ) {
-		AST s = Port;
+	public Boolean v_port(ASTree Port ) {
+		ASTree s = Port;
 		int cfocus = focus;
 		Boolean prev = false;
 		if(v_Terminal("COLON",s)) {
@@ -528,7 +531,7 @@ public Boolean v_stmt_list(AST Stmt_list) {
 			if (v_Terminal("ID",s)) {
 				prev = true;
 				if(v_Terminal("COLON",s)) {
-					AST compass_pt = new AST("Compass_pt");
+					ASTree compass_pt = new ASTree("Compass_pt");
 					if( v_compass_pt(compass_pt)) {
 						s.addChild(compass_pt);
 						return true;
@@ -540,7 +543,7 @@ public Boolean v_stmt_list(AST Stmt_list) {
 					}
 				}
 			}
-			AST compass_pt = new AST("Compass_pt");
+			ASTree compass_pt = new ASTree("Compass_pt");
 			if(v_compass_pt(compass_pt)) {
 				s.addChild(compass_pt);
 				return true;
@@ -593,8 +596,8 @@ public Boolean v_stmt_list(AST Stmt_list) {
 		}
 	}
 		
-public Boolean v_compass_pt(AST Compass_pt) {
-	AST s = Compass_pt;
+public Boolean v_compass_pt(ASTree Compass_pt) {
+	ASTree s = Compass_pt;
 		
 		if (v_Terminal("N",s) || v_Terminal("NE",s) || v_Terminal("E",s) || v_Terminal("SE",s) || v_Terminal("S",s) || v_Terminal("SW",s) || v_Terminal("W",s) || v_Terminal("NW",s) || v_Terminal("C",s) || v_Terminal("UNDERSCORE",s) ) {
 			Error = "";
@@ -612,13 +615,13 @@ public Boolean v_compass_pt(AST Compass_pt) {
 		return false ;
 	}
 	
-	public Boolean v_attr_stmt (AST Attr_stmt) {
-		AST s = Attr_stmt;
+	public Boolean v_attr_stmt (ASTree Attr_stmt) {
+		ASTree s = Attr_stmt;
 		int cfocus= focus;
 		if (v_Terminal("GRAPH",s) || v_Terminal("NODE",s) || v_Terminal("EDGE",s))  {
 			Error = "";
 			cfocus= focus;
-			AST attr_list = new AST ("Attr_list");
+			ASTree attr_list = new ASTree ("Attr_list");
 			if (v_attr_list(attr_list)) {
 				s.addChild(attr_list);
 				return true;
@@ -691,14 +694,14 @@ public Boolean v_compass_pt(AST Compass_pt) {
 	
 	
 	
-	public Boolean v_attr_list(AST Attr_list) {
-		AST s = Attr_list;
+	public Boolean v_attr_list(ASTree Attr_list) {
+		ASTree s = Attr_list;
 		int cfocus= focus;
 		Boolean prev = false;
 		//System.out.println("Entered att list  "+cfocus);
 		if (v_Terminal("LBRACKET",s)) {
 			cfocus = focus;
-			AST a_list = new AST("A_list");
+			ASTree a_list = new ASTree("A_list");
 			 if (v_a_list(a_list)) {
 				 cfocus =focus;
 				 s.addChild(a_list);
@@ -731,8 +734,8 @@ public Boolean v_compass_pt(AST Compass_pt) {
 		}
 		
 	}
-	public Boolean v_a_list(AST A_list) {
-		AST s = A_list;
+	public Boolean v_a_list(ASTree A_list) {
+		ASTree s = A_list;
 		int cfocus = focus;
 		boolean prev = false;
 		//ID '=' ID [ (';' | ',') ] [ a_list ]
@@ -742,10 +745,10 @@ public Boolean v_compass_pt(AST Compass_pt) {
 			//s.addChild(new AST("ID"));
 			// s.addChild(new AST("EQUAL"));
 			// s.addChild(new AST("ID"));
-		 	s.addChild(new AST (ASTokens.get(focus-3).substring(3,ASTokens.get(focus-3).length())));
-		 	s.addChild(new AST("EQUAL"));
+		 	s.addChild(new ASTree (ASTokens.get(focus-3).substring(3,ASTokens.get(focus-3).length())));
+		 	s.addChild(new ASTree("EQUAL"));
 			//s.addChild(new AST (ASTokens.get(focus).substring(3,ASTokens.get(focus).length())));
-			s.addChild(new AST (ASTokens.get(focus-1).substring(3,ASTokens.get(focus-1).length())));
+			s.addChild(new ASTree (ASTokens.get(focus-1).substring(3,ASTokens.get(focus-1).length())));
 			 cfocus=focus;
 			// if (v_Terminal("SEMICOLON") || v_Terminal("COMMA")){
 			if (v_Terminal("COMMA",s)){
@@ -855,12 +858,12 @@ public Boolean v_compass_pt(AST Compass_pt) {
 		 return false;
 	}
 	
-	public Boolean v_edge_stmt(AST Edge_stmt) {
-		AST s = Edge_stmt;
+	public Boolean v_edge_stmt(ASTree Edge_stmt) {
+		ASTree s = Edge_stmt;
 		int cfocus=focus;
 		int start = focus;
 		Boolean prev = false;
-		AST node_id = new AST("Node_id");
+		ASTree node_id = new ASTree("Node_id");
 		if (v_node_id(node_id)) {
 			s.addChild(node_id);
 			prev =true;
@@ -868,7 +871,7 @@ public Boolean v_compass_pt(AST Compass_pt) {
 		} 
 		if (!prev) {
 			focus=cfocus;
-			AST subgraph = new AST("Subgraph");
+			ASTree subgraph = new ASTree("Subgraph");
 			if(v_subgraph(subgraph)) {
 				s.addChild(subgraph);
 				prev =true;
@@ -877,14 +880,14 @@ public Boolean v_compass_pt(AST Compass_pt) {
 		}
 		if (prev) {
 			//System.out.println("Edge Node or Subgraphpass");
-			AST edgerhs= new AST("Edge_RHS");
+			ASTree edgerhs= new ASTree("Edge_RHS");
 			if (v_edgeRHS(edgerhs)) {
 				s.addChild(edgerhs);
 				prev = true;
 				cfocus=focus;
 				if (v_Terminal("LBRACKET")) {
 					focus=focus-1;
-					AST attr_list = new AST("Attr_list");
+					ASTree attr_list = new ASTree("Attr_list");
 					if(v_attr_list(attr_list)) {
 						s.addChild(attr_list);
 						return true;
@@ -943,14 +946,14 @@ public Boolean v_compass_pt(AST Compass_pt) {
 	}
 	
 	
-	public Boolean v_edgeRHS(AST Edge_RHS) {
-		AST s = Edge_RHS;
+	public Boolean v_edgeRHS(ASTree Edge_RHS) {
+		ASTree s = Edge_RHS;
 		int start=focus;
 		int cfocus=focus;
 		Boolean prev= false;
 		if (v_Terminal("EDGEOP",s)) {
 			cfocus=focus;
-			AST node_id = new AST("Node_id");
+			ASTree node_id = new ASTree("Node_id");
 			if(v_node_id(node_id)) {
 				s.addChild(node_id);
 				prev=true;
@@ -958,7 +961,7 @@ public Boolean v_compass_pt(AST Compass_pt) {
 			}
 			if (!prev) {
 				focus=cfocus;
-				AST subgraph = new AST("Sub_graph");
+				ASTree subgraph = new ASTree("Sub_graph");
 				if(v_subgraph(subgraph)) {
 					s.addChild(subgraph);
 					prev=true;
