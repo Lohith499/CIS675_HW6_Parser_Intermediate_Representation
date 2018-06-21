@@ -1,6 +1,9 @@
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+*
+* @author Lohith Nimmala
+*/
 public class Parser2 extends LexAndParser {
 	
 	Map<Integer,String> pTokens = new HashMap<Integer, String>();
@@ -8,19 +11,30 @@ public class Parser2 extends LexAndParser {
 	String Error = "";
 	String token = "";
 	ASTree aSTree = new ASTree("GRAPH");
-	Parser2(Map<Integer, String> Tokens){
+	Parser2(){
+		
+	}
+	
+	/*
+	 Parser2(Map<Integer, String> Tokens){
 		this.pTokens = Tokens;
 	}
-	public String v_parser() {
+	 */
+	public ASTree v_parser() {
+		
 		v_graph();
 		if(Error.compareTo("")==0) {
+			System.out.println("");
+			System.out.println("Parser Status : Program has no Syntax Errors");
 			System.out.println("Abstract Syntax Tree");
 			System.out.println("");
 			System.out.println(aSTree.toStringTree());
-			System.out.println("");
-			return "Program has no Syntax Errors";
+			
+			return aSTree;
 		}
-		return Error;
+		System.out.println("Parser Status:"+Error);
+		System.exit(0);
+		return aSTree;
 	}
 	
 	public void v_graph() {
@@ -269,7 +283,7 @@ public Boolean v_stmt_list(ASTree Stmt_list) {
 				//System.out.println("Entered attr_stmt Verification statement");
 				if(v_attr_stmt(attr_stmt)) {
 					//System.out.println("Succesful v_attr_stmt"+focus);
-					if (v_Terminal("SEMICOLON",s)) { 
+					if (v_Terminal("SEMICOLON")) { 
 					//	System.out.println("Succesful v_attr_stmt()"+start);
 						Error="";
 						s.addChild(attr_stmt);
@@ -285,7 +299,7 @@ public Boolean v_stmt_list(ASTree Stmt_list) {
 					ASTree edge_stmt = new ASTree("EDGE_Stmt");
 					if(v_edge_stmt(edge_stmt)) {
 						//System.out.println("Succesful v_edge_stmt"+focus);
-						if (v_Terminal("SEMICOLON",s)) { 
+						if (v_Terminal("SEMICOLON")) { 
 						//	System.out.println("Succesful Edge statement "+start);
 							Error="";
 							s.addChild(edge_stmt);
@@ -302,7 +316,7 @@ public Boolean v_stmt_list(ASTree Stmt_list) {
 						if(v_subgraph(subgraph_stmt)) {
 							//System.out.println("Succesful v_subgraph"+focus);
 							
-							if (v_Terminal("SEMICOLON",s)) { 
+							if (v_Terminal("SEMICOLON")) { 
 							//	System.out.println("Succesful Subgraph statement "+start);
 								Error="";
 								s.addChild(subgraph_stmt);

@@ -1,3 +1,7 @@
+/**
+ *
+ * @author Lohith Nimmala
+ */
 public class Token {
 	public int add;
 	public String type;
