@@ -21,7 +21,7 @@ public class LexAndParser {
 		File file = new File("input.txt");
 		br = new BufferedReader(new FileReader(file));
 		String st;
-		System.out.println("Input");
+		//System.out.println("Input");
 		while ((st = br.readLine()) != null) {
 			//System.out.println(st);
 		}
@@ -47,30 +47,25 @@ public class LexAndParser {
 			//System.out.println();
 		}
 		String ast="";
-		System.out.println();
-		System.out.println();
-		System.out.println();
+		
 		count=1;
 		for (Map.Entry<Integer,String> entry : ASTokens.entrySet()) {
 			String[] s = entry.getValue().split(",");
 			Tokens.put(count,s[0]);
 			count=count+1;
 		}
-
 		Parser2 p1 = new Parser2();
 		p1.pTokens = Tokens;
-
 		ASTree rootASTree = p1.v_parser();
 		Treewalker tree = new Treewalker();
 		System.out.println("Breadth first search at the root of a tree");
 		//tree.bfs(rootASTree);
 		System.out.println("\n");
 		System.out.println("\n");
-		System.out.println("Printing Childnodes of Root");
+		System.out.println("Displaying Fragments of Root Node");
 		Treewalker tree1 = new Treewalker();
 		tree1.findFragements(rootASTree.childnodes);
 		System.out.println("\n");
-
 		System.out.println("Displaying all Nodes which are leaf nodes");
 		Treewalker tree2 = new Treewalker();
 		//Prints all Nodes which are leaf nodes
@@ -86,6 +81,7 @@ public class LexAndParser {
 		tree3.mostchildnodesOutput(rootASTree.childnodes);
 		ASTree Stmtlist=new ASTree();
 		//Getting a node from the tree using its name
+		
 		Stmtlist = rootASTree.findNode("Stmt_list");
 
 

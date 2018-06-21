@@ -44,6 +44,35 @@ public class Treewalker {
     }
 
     
+public void most_findLeaves(ArrayList<ASTree> NodeList) {
+        
+    	if(NodeList.isEmpty()) { }
+    	else {
+        for (ASTree node : NodeList) 
+        {
+            if (!isVisited(node)) 
+            {
+            	//Lohith
+            	  
+                //if (node.childnodes.isEmpty()) 
+                if (node.isNil()) 
+                {
+                   // System.out.println(node.name + " is a leaf node");
+                }
+                
+            	
+                visited.add(node.name+" "+node.hashCode());
+                if (!(node.isNil())) { 
+                	most_findLeaves(node.childnodes);
+                }
+            }
+        }
+        if (visited.equals(NodeList)) {
+            visited.clear();
+        }
+    	}
+    }
+    
 public void findParents(ArrayList<ASTree> NodeList) {
         
     	if(NodeList.isEmpty()) { }
@@ -159,7 +188,7 @@ public void findParents(ArrayList<ASTree> NodeList) {
                 }
                 visited.add(node.name+" "+node.hashCode());
                 if (!(node.isNil())) { 
-                findLeaves(node.childnodes);
+                most_findLeaves(node.childnodes);
                 }
             	}
             }
