@@ -18,7 +18,7 @@ public class LexAndParser {
 		lex l1 = new lex();
 		// Fetching input file
 
-		File file = new File("C:\\Users\\lohit\\Desktop\\input.txt");
+		File file = new File("input.txt");
 		br = new BufferedReader(new FileReader(file));
 		String st;
 		System.out.println("Input");
